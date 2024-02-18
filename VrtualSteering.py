@@ -1,10 +1,7 @@
 import cv2
 import time
 import HandTrackingModule as htm
-import keyboard
 import KeyboardInput as ki
-import ctypes
-
 
 
 wCam,hCam = 320,240
@@ -15,7 +12,8 @@ cap.set(4,hCam)
 
 
 detector = htm.handDetector(detectionCon=0.9)
-def sendinput(keys):
+
+def sendinput(keys,img):
     charlist = ['w','s','a','d']
     for i in charlist:
         if i in keys:
@@ -29,15 +27,15 @@ def sendinput(keys):
     cv2.imshow("Image", img)
     cv2.waitKey(1)
         
-
-while True:
+def steering(fps):
     success, img = cap.read()
     img = cv2.flip(img,1)
     img = detector.findHands(img)
     lmList = detector.findPosition(img)
-
+    img = cv2.flip(img,1)
+    cv2.putText(img,'FPS:'+ str(int(fps)), (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1,
+                (0, 0, 255), 2)
     if len(lmList)!=0:
-        
         THUMBTIPx1,THUMBTIPy1   = lmList[4][1], lmList[4][2]
         INDEXBASEx1,INDEXBASEy1 = lmList[5][1], lmList[5][2]
         MIDBASEx1,MIDBASEy1     = lmList[9][1], lmList[9][2]
@@ -51,45 +49,50 @@ while True:
             if (INDEXBASEx1<THUMBTIPx1 & MIDBASEy1<MIDTIPy1):
                 if(INDEXBASEy1-PINKYBASEy1>20):
                     print('brake left')
-                    sendinput(['s','a'])
+                    sendinput(['s','a'],img)
                 elif(INDEXBASEy1-PINKYBASEy1<-25):
                     print('brake right')
-                    sendinput(['s','d'])
+                    sendinput(['s','d'],img)
                 else:
                     print("brake")
-                    sendinput(['s'])
+                    sendinput(['s'],img)
             elif (INDEXBASEx1<THUMBTIPx1):
                 if(INDEXBASEy1-PINKYBASEy1>20):
                     print('brake left')
-                    sendinput(['s','a'])
+                    sendinput(['s','a'],img)
                 elif(INDEXBASEy1-PINKYBASEy1<-25):
                     print('brake right')
-                    sendinput(['s','d'])
+                    sendinput(['s','d'],img)
                 else:
                     print("brake")
-                    sendinput(['s'])
+                    sendinput(['s'],img)
             elif(MIDBASEy1<MIDTIPy1):
                 if(INDEXBASEy1-PINKYBASEy1>20):
                     print('accelerate left')
-                    sendinput(['w','a'])
+                    sendinput(['w','a'],img)
                 elif(INDEXBASEy1-PINKYBASEy1<-25):
                     print('accelerate right')
-                    sendinput(['w','d'])
+                    sendinput(['w','d'],img)
                 else:
-                    sendinput(['w'])
+                    print('accelerate')
+                    sendinput(['w'],img)
             else:
                 if(INDEXBASEy1-PINKYBASEy1>20):
                     print('neutral left')
-                    sendinput(['a'])
+                    sendinput(['a'],img)
                 elif(INDEXBASEy1-PINKYBASEy1<-25):
                     print('neutral right')
-                    sendinput(['d'])
+                    sendinput(['d'],img)
                 else:
                     print("neutral")
-                    sendinput([])
+                    sendinput([],img)
         else:
             print('use right hand')
-            sendinput([])
+            sendinput([],img)
     cv2.imshow("Image", img)
     cv2.waitKey(1)
+        
 
+def cleanup():
+    cap.release()
+    cv2.destroyAllWindows()
