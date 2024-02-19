@@ -1,6 +1,6 @@
 import sys
 import time
-import VrtualSteering as vs
+import VirtualSteering as vs
 from PyQt6.QtWidgets import (
     QApplication,
     QWidget,

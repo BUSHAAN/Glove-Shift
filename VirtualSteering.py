@@ -45,7 +45,7 @@ def steering(fps):
         PINKYBASEx1,PINKYBASEy1 = lmList[17][1], lmList[17][2]
         
 
-        if(INDEXBASEx1<PINKYBASEx1):
+        if(INDEXBASEx1<PINKYBASEx1): #to check if its a right hand
             if (INDEXBASEx1<THUMBTIPx1 & MIDBASEy1<MIDTIPy1):
                 if(INDEXBASEy1-PINKYBASEy1>20):
                     print('brake left')
