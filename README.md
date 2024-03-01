@@ -23,15 +23,15 @@
 2. Install the required libraries:
 
 ```bash
-    pip install mediapipe opencv-python ctypes
+pip install mediapipe opencv-python ctypes
 ```
 3. Clone or download the project repository.
 ```bash
-    git clone https://github.com/BUSHAAN/Glove-Shift.git
+git clone https://github.com/BUSHAAN/Glove-Shift.git
 ```
 5. Open a terminal in the project directory and run:
 ```bash
-    pip python app.py
+pip python app.py
 ```
 ## Visual Aids (Coming Soon!)
 
