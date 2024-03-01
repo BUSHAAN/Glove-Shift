@@ -29,7 +29,7 @@ pip install mediapipe opencv-python ctypes
 ```bash
 git clone https://github.com/BUSHAAN/Glove-Shift.git
 ```
-5. Open a terminal in the project directory and run:
+4. Open a terminal in the project directory and run:
 ```bash
 pip python app.py
 ```
