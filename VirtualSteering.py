@@ -4,7 +4,8 @@ import HandTrackingModule as htm
 import KeyboardInput as ki
 
 
-wCam,hCam = 320,240
+#wCam,hCam = 320,240,|352,264
+wCam,hCam = 384,288
 
 cap = cv2.VideoCapture(0)
 cap.set(3,wCam)
@@ -24,7 +25,10 @@ def sendinput(keys,img):
             ki.release_key(i)
             cv2.imshow("Image", img)
             cv2.waitKey(1)
-    cv2.imshow("Image", img)
+    winname = "Image"
+    cv2.namedWindow(winname)        # Create a named window
+    cv2.moveWindow(winname, 50,10)  # Move it to (40,30)
+    cv2.imshow(winname, img)
     cv2.waitKey(1)
         
 def steering(fps):
