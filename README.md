@@ -33,7 +33,7 @@ git clone https://github.com/BUSHAAN/Glove-Shift.git
 ```bash
 pip python app.py
 ```
-## Visual Aids (Coming Soon!)
+## Gesture Controls for the application... Have Fun!!!
+<img src="images/Gesture_Controls.png?raw=true" height="400">
 
-visual guides of hand gestures: We're currently adding in-action visuals to showcase Glove Shift's capabilities. Stay tuned!
-Video Tutorial: A step-by-step video guide is in the works. We'll update this section upon release.
+
