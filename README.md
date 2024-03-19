@@ -1,7 +1,5 @@
 # Glove Shift: Drive with Your Hands!
 
-## Description
-
 **Experience a whole new level of racing immersion with Glove Shift!** This hand gesture recognition system lets you control your racing game's car intuitively, **controlling speed and navigating turns with just your hands**. It's open-source, customizable, and brings a **fun and unique twist to your virtual driving adventures**.
 
 ## Features
@@ -13,9 +11,9 @@
 
 ## Technologies Used
 
-* Python
-* Open Source Computer Vision Library (OpenCV) 
-* MediaPipe (for efficient hand detection and pose estimation)
+* [Python](https://www.python.org/)
+* [Open Source Computer Vision Library (OpenCV)](https://opencv.org/) 
+* [MediaPipe](https://developers.google.com/mediapipe) (for efficient hand detection and pose estimation)
 
 ## Installation
 
@@ -36,4 +34,6 @@ pip python app.py
 ## Gesture Controls for the application... Have Fun!!!
 <img src="images/Gesture_Controls.png?raw=true" height="400">
 
+> [!NOTE]
+> This application currently uses right-hand gestures for optimal control. Left hand functionalities will be added soon.
 
