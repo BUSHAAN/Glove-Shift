@@ -5,7 +5,7 @@
 ## Features
 
 * **Gesture-based control:** Master the racetrack using intuitive hand gestures for acceleration, braking, steering, and reverse.
-* **Open-source** Built with Python and open-source libraries.
+* **Open-source:** Built with Python and open-source libraries.
 * **Lightweight and easy to use:** Runs directly from the terminal, avoiding complex setups.
 * **Future expansions:** a distributable exe file will be available soon
 
