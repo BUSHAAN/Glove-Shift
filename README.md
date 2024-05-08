@@ -1,6 +1,6 @@
 # Glove Shift: Drive with Your Hands!
 
-**Experience a whole new level of racing immersion with Glove Shift!** This hand gesture recognition system lets you control your racing game's car intuitively, **controlling speed and navigating turns with just your hands**. It's open-source, customizable, and brings a **fun and unique twist to your virtual driving adventures**.
+**Experience a whole new level of racing immersion with Glove Shift!** This hand gesture recognition system lets you control your racing game's car intuitively, **controlling speed and navigating turns with just your hands**. It's open-source, customizable, and brings a **fun and unique twist to your virtual driving adventures**. [Check out the demostration video on LinkedIn.](https://www.linkedin.com/posts/bushaangunatilake_racinggames-handgesturerecognition-computervision-activity-7187445360850616320-A-6p?utm_source=share&utm_medium=member_desktop)
 
 ## Features
 
