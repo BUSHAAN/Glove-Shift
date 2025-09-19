@@ -1,5 +1,11 @@
 # Glove Shift: Drive with Your Hands!
 
+<p>
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"/></a>
+  <a href="https://opencv.org/"><img src="https://img.shields.io/badge/OpenCV-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white" alt="OpenCV"/></a>
+  <a href="https://developers.google.com/mediapipe"><img src="https://img.shields.io/badge/MediaPipe-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="MediaPipe"/></a>
+</p>
+
 **Experience a whole new level of racing immersion with Glove Shift!** This hand gesture recognition system lets you control your racing game's car intuitively, **controlling speed and navigating turns with just your hands**. It's open-source, customizable, and brings a **fun and unique twist to your virtual driving adventures**. [Check out the demostration video on LinkedIn.](https://www.linkedin.com/posts/bushaangunatilake_racinggames-handgesturerecognition-computervision-activity-7187445360850616320-A-6p?utm_source=share&utm_medium=member_desktop)
 
 ## Features
