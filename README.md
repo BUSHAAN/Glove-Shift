@@ -32,9 +32,10 @@
 
   1. Download the latest `GloveShift-Setup.exe` from the Releases.
   2. Run the installer.
-  3. Launch `GloveShift.exe`.
+  3. Launch `GloveShift.exe` and let it run in the background.
   4. If an error occurs, install the Visual C++ Redistributable 2015–2022 (both x64 and x86 versions are included in the release).
-  5. Make sure your game’s driving controls are mapped to **W (accelerate), A (left), S (brake/reverse), and D (right)** for proper gesture control.
+  5. Open your racing game and make sure the driving controls are mapped to W (accelerate), A (left), S (brake/reverse), and D (right) for proper gesture control.
+  6. Have Fun !
 
 - **Option 2 — Portable version**
 
