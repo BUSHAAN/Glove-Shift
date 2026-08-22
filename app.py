@@ -1,13 +1,12 @@
 import sys
 import time
-import cv2
 import VirtualSteering as vs
 from PyQt6.QtWidgets import (
     QApplication,
     QWidget,
     QPushButton,
     QVBoxLayout,
-    QMessageBox
+    QMessageBox,
 )
 from PyQt6.QtCore import QTimer
 
@@ -20,14 +19,13 @@ class MyWindow(QWidget):
         self.initUI()
         app.aboutToQuit.connect(self.cleanup)
 
-        # Timer for steering loop
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_steering)
 
-        self.pTime = 0  # Track FPS
+        self.pTime = 0
 
     def initUI(self):
-        self.setWindowTitle("Virtual Steering")
+        self.setWindowTitle("Glove Shift")
         self.setFixedWidth(300)
         self.setFixedHeight(100)
 
@@ -40,25 +38,18 @@ class MyWindow(QWidget):
 
     def handle_button_click(self):
         if not self.steering_state:
-            # Check camera before starting
-            cap = cv2.VideoCapture(0)
-            if not cap.isOpened():
+            if not vs.start_camera():
                 QMessageBox.critical(
                     self,
                     "Camera Error",
-                    "Could not access the camera. Please check if it is connected or used by another app."
+                    "Could not access the camera. Please check if it is connected or used by another app.",
                 )
-                cap.release()
                 return
-            cap.release()
 
             self.steering_state = True
             self.button.setText("Stop Steering!")
             self.pTime = time.time()
-
-            # Start timer -> calls update_steering() every 30ms
             self.timer.start(30)
-
         else:
             self.stop_steering()
 
@@ -70,15 +61,23 @@ class MyWindow(QWidget):
         fps = 1 / (cTime - self.pTime) if cTime != self.pTime else 0
         self.pTime = cTime
 
-        vs.steering(fps)
+        if not vs.steering(fps):
+            self.stop_steering()
+            QMessageBox.warning(
+                self,
+                "Camera Disconnected",
+                "The webcam stopped providing frames. Steering has been stopped and all keys were released.",
+            )
 
     def stop_steering(self):
         self.steering_state = False
         self.button.setText("Start Steering!")
         self.timer.stop()
+        vs.stop_camera()
 
     def cleanup(self):
-        self.stop_steering()
+        self.steering_state = False
+        self.timer.stop()
         vs.cleanup()
 
 
