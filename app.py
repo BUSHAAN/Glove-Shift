@@ -1,14 +1,18 @@
 import sys
 import time
 import VirtualSteering as vs
+import settings as app_settings
 from PyQt6.QtWidgets import (
     QApplication,
     QWidget,
     QPushButton,
     QVBoxLayout,
+    QHBoxLayout,
+    QLabel,
+    QSlider,
     QMessageBox,
 )
-from PyQt6.QtCore import QTimer
+from PyQt6.QtCore import QTimer, Qt
 
 
 class MyWindow(QWidget):
@@ -16,7 +20,10 @@ class MyWindow(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.initUI()
+        saved = app_settings.load_settings()
+        vs.set_sensitivity(saved["steering"], saved["smoothing"])
+
+        self.initUI(saved)
         app.aboutToQuit.connect(self.cleanup)
 
         self.timer = QTimer()
@@ -24,17 +31,56 @@ class MyWindow(QWidget):
 
         self.pTime = 0
 
-    def initUI(self):
+    def initUI(self, saved):
         self.setWindowTitle("Glove Shift")
-        self.setFixedWidth(300)
-        self.setFixedHeight(100)
+        self.setFixedWidth(320)
+        self.setMinimumHeight(180)
 
         self.button = QPushButton("Start Steering!")
         self.button.clicked.connect(self.handle_button_click)
 
+        self.steering_slider = QSlider(Qt.Orientation.Horizontal)
+        self.steering_slider.setRange(0, 100)
+        self.steering_slider.setValue(saved["steering"])
+        self.steering_value = QLabel(str(saved["steering"]))
+        self.steering_value.setMinimumWidth(28)
+        self.steering_slider.valueChanged.connect(self.on_sensitivity_changed)
+
+        self.smoothing_slider = QSlider(Qt.Orientation.Horizontal)
+        self.smoothing_slider.setRange(0, 100)
+        self.smoothing_slider.setValue(saved["smoothing"])
+        self.smoothing_value = QLabel(self._smoothing_label(saved["smoothing"]))
+        self.smoothing_value.setMinimumWidth(72)
+        self.smoothing_slider.valueChanged.connect(self.on_sensitivity_changed)
+
+        steering_row = QHBoxLayout()
+        steering_row.addWidget(QLabel("Steering sensitivity"))
+        steering_row.addWidget(self.steering_slider)
+        steering_row.addWidget(self.steering_value)
+
+        smoothing_row = QHBoxLayout()
+        smoothing_row.addWidget(QLabel("Smoothing"))
+        smoothing_row.addWidget(self.smoothing_slider)
+        smoothing_row.addWidget(self.smoothing_value)
+
         layout = QVBoxLayout()
         layout.addWidget(self.button)
+        layout.addLayout(steering_row)
+        layout.addLayout(smoothing_row)
         self.setLayout(layout)
+
+    @staticmethod
+    def _smoothing_label(smoothing):
+        frames = vs.get_sensitivity()["debounce_frames"]
+        return f"{smoothing} ({frames}f)"
+
+    def on_sensitivity_changed(self, _value=None):
+        steering = self.steering_slider.value()
+        smoothing = self.smoothing_slider.value()
+        vs.set_sensitivity(steering, smoothing)
+        self.steering_value.setText(str(steering))
+        self.smoothing_value.setText(self._smoothing_label(smoothing))
+        app_settings.save_settings(steering, smoothing)
 
     def handle_button_click(self):
         if not self.steering_state:

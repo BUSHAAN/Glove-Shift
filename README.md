@@ -43,6 +43,9 @@ No gloves, tracking hardware, or external controllers — just a camera and Wind
 **Simple desktop UI**  
 A small PyQt6 window starts and stops the steering loop, with a live OpenCV preview of the tracked hand.
 
+**Adjustable sensitivity**  
+Steering sensitivity and smoothing sliders in the app tune how quickly tilt turns engage and how stable gesture-to-key mapping feels. Settings are saved locally.
+
 **Windows installer and portable build**  
 Download a setup package or a standalone portable EXE from [Releases](https://github.com/BUSHAAN/Glove-Shift/releases/latest) — no Python install needed for end users.
 
@@ -179,6 +182,7 @@ Glove-Shift/
 ├── VirtualSteering.py      # Gesture → WASD loop
 ├── HandTrackingModule.py   # MediaPipe Hand Landmarker (Tasks API)
 ├── KeyboardInput.py        # Windows SendInput helpers
+├── settings.py             # Load/save sensitivity (settings.json)
 ├── models/
 │   └── hand_landmarker.task
 ├── images/

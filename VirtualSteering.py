@@ -4,12 +4,15 @@ import KeyboardInput as ki
 
 wCam, hCam = 384, 288
 CAMERA_INDEX = 0
-DEBOUNCE_FRAMES = 3
-# Tilt hysteresis: enter turn past these, stay in turn until returning inside exit band
-TILT_ENTER_LEFT = 20
-TILT_ENTER_RIGHT = -25
-TILT_EXIT_LEFT = 10
-TILT_EXIT_RIGHT = -12
+
+# User-facing sensitivity (0–100). Defaults match prior hard-coded feel.
+_steering_ui = 50
+_smoothing_ui = 40
+_debounce_frames = 3
+_tilt_enter_left = 20
+_tilt_enter_right = -25
+_tilt_exit_left = 10
+_tilt_exit_right = -12
 
 cap = None
 detector = None
@@ -19,6 +22,54 @@ _pending_keys = ()
 _pending_count = 0
 _active_keys = ()
 _active_steer = None  # "left" | "right" | None
+
+
+def _apply_sensitivity_mapping(steering, smoothing):
+    """Map UI 0–100 values to tilt thresholds and debounce frames."""
+    global _steering_ui, _smoothing_ui
+    global _debounce_frames
+    global _tilt_enter_left, _tilt_enter_right, _tilt_exit_left, _tilt_exit_right
+
+    steering = max(0, min(100, int(steering)))
+    smoothing = max(0, min(100, int(smoothing)))
+
+    _steering_ui = steering
+    _smoothing_ui = smoothing
+
+    # Higher steering sensitivity → smaller tip needed (40px → 8px)
+    enter_left = 40 - (32 * steering) / 100.0
+    # Keep historical left/right asymmetry (~20 vs 25)
+    enter_right_mag = enter_left * 1.25
+
+    _tilt_enter_left = enter_left
+    _tilt_enter_right = -enter_right_mag
+    _tilt_exit_left = enter_left * 0.5
+    _tilt_exit_right = -enter_right_mag * 0.5
+
+    # Higher smoothing → more debounce frames (1–8); 40 → 3
+    _debounce_frames = max(1, min(8, 1 + (smoothing * 7) // 100))
+
+
+def get_sensitivity():
+    """Return current UI sensitivity values and derived debounce frames."""
+    return {
+        "steering": _steering_ui,
+        "smoothing": _smoothing_ui,
+        "debounce_frames": _debounce_frames,
+    }
+
+
+def set_sensitivity(steering, smoothing):
+    """Update sensitivity live. Resets debounce when smoothing changes."""
+    global _smoothing_ui
+    prev_smoothing = _smoothing_ui
+    _apply_sensitivity_mapping(steering, smoothing)
+    if _smoothing_ui != prev_smoothing:
+        _reset_debounce()
+
+
+# Initialize derived thresholds from defaults
+_apply_sensitivity_mapping(_steering_ui, _smoothing_ui)
 
 
 def start_camera(camera_index=CAMERA_INDEX):
@@ -115,7 +166,7 @@ def _commit_keys(keys):
         _pending_keys = normalized
         _pending_count = 1
 
-    if _pending_count >= DEBOUNCE_FRAMES:
+    if _pending_count >= _debounce_frames:
         _active_keys = normalized
         _pending_count = 0
 
@@ -127,16 +178,16 @@ def _steer_from_tilt(tilt):
     global _active_steer
 
     if _active_steer == "left":
-        if tilt < TILT_EXIT_LEFT:
+        if tilt < _tilt_exit_left:
             _active_steer = None
     elif _active_steer == "right":
-        if tilt > TILT_EXIT_RIGHT:
+        if tilt > _tilt_exit_right:
             _active_steer = None
 
     if _active_steer is None:
-        if tilt > TILT_ENTER_LEFT:
+        if tilt > _tilt_enter_left:
             _active_steer = "left"
-        elif tilt < TILT_ENTER_RIGHT:
+        elif tilt < _tilt_enter_right:
             _active_steer = "right"
 
     return _active_steer

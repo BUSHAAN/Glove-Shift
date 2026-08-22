@@ -11,6 +11,7 @@ htmlcov/
 
 # Local env files (keep .env.example tracked)
 .env
+settings.json
 
 ########## Build artifacts ##########
 # PyInstaller
