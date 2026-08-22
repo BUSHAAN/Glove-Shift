@@ -26,6 +26,14 @@ _active_steer = None  # "left" | "right" | None
 # "either" | "left" | "right" — which hand(s) may drive input
 _hand_preference = "either"
 
+# Logical action → physical key id (see KeyboardInput.SCAN_CODES)
+_keybinds = {
+    "accelerate": "w",
+    "brake": "s",
+    "left": "a",
+    "right": "d",
+}
+
 
 def get_hand_preference():
     return _hand_preference
@@ -40,6 +48,30 @@ def set_hand_preference(hand):
     if hand != _hand_preference:
         _hand_preference = hand
         _reset_debounce()
+
+
+def get_keybinds():
+    return dict(_keybinds)
+
+
+def set_keybinds(binds):
+    """
+    Update action→key mapping. Expected keys:
+    accelerate, brake, left, right (physical ids from KeyboardInput.SCAN_CODES).
+    """
+    global _keybinds
+    updated = dict(_keybinds)
+    for action in ("accelerate", "brake", "left", "right"):
+        if action in binds and binds[action] in ki.SCAN_CODES:
+            updated[action] = binds[action]
+    if updated != _keybinds:
+        _clear_input()
+        _keybinds = updated
+        ki.set_bound_keys(_keybinds.values())
+
+
+# Keep KeyboardInput release_all in sync with defaults
+ki.set_bound_keys(_keybinds.values())
 
 
 def _apply_sensitivity_mapping(steering, smoothing):
@@ -158,9 +190,9 @@ def _show_frame(img):
 
 
 def _apply_keys(keys):
-    """Press/release WASD to match the desired key set."""
+    """Press/release currently bound physical keys to match the desired set."""
     desired = set(keys)
-    for key in ("w", "a", "s", "d"):
+    for key in _keybinds.values():
         if key in desired:
             ki.press_key(key)
         else:
@@ -214,13 +246,13 @@ def _steer_from_tilt(tilt):
 def _keys_for_gesture(drive, steer):
     keys = []
     if drive == "accelerate":
-        keys.append("w")
+        keys.append(_keybinds["accelerate"])
     elif drive == "brake":
-        keys.append("s")
+        keys.append(_keybinds["brake"])
     if steer == "left":
-        keys.append("a")
+        keys.append(_keybinds["left"])
     elif steer == "right":
-        keys.append("d")
+        keys.append(_keybinds["right"])
     return keys
 
 

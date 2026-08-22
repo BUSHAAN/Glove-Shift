@@ -1,6 +1,12 @@
-# 🧤 Glove Shift
+# Glove Shift
 
-Control racing games with hand gestures captured through your webcam.
+<p align="center">
+  <img src="images/logo.png?raw=true" alt="Glove Shift" width="420">
+</p>
+
+<p align="center">
+  Control racing games with hand gestures captured through your webcam.
+</p>
 
 <p>
   <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"/></a>
@@ -46,6 +52,12 @@ A small PyQt6 window starts and stops the steering loop, with a live OpenCV prev
 **Adjustable sensitivity**  
 Steering sensitivity and smoothing sliders in the app tune how quickly tilt turns engage and how stable gesture-to-key mapping feels. Settings are saved locally.
 
+**Custom key mapping**  
+Remap accelerate / brake / left / right from WASD to arrows or other keys without editing code.
+
+**In-app gesture guide**  
+`Gesture_Controls_New.png` is shown in the main window so you can check poses without opening the README.
+
 **Windows installer and portable build**  
 Download a setup package or a standalone portable EXE from [Releases](https://github.com/BUSHAAN/Glove-Shift/releases/latest) — no Python install needed for end users.
 
@@ -60,7 +72,7 @@ Watch Glove Shift controlling a racing game with hand gestures:
 Gesture reference (mirror the same poses for the left hand):
 
 <p align="center">
-  <img src="images/Gesture_Controls.png?raw=true" alt="Gesture control chart" width="640">
+  <img src="images/Gesture_Controls_New.png?raw=true" alt="Gesture control chart" width="640">
 </p>
 
 | Gesture idea | Keys |
@@ -186,7 +198,9 @@ Glove-Shift/
 ├── models/
 │   └── hand_landmarker.task
 ├── images/
-│   ├── Gesture_Controls.png
+│   ├── Gesture_Controls_New.png
+│   ├── logo.png
+│   ├── icon.png
 │   └── icon.ico
 ├── Installer/              # Inno Setup packaging
 ├── requirements.txt

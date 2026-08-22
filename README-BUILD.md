@@ -54,8 +54,8 @@ Notes:
 .\.venv\Scripts\Activate.ps1
 pyinstaller --noconfirm --onefile --windowed `
     --name GloveShift `
-    --icon "Images/icon.ico" `
-    --add-data "Images/icon.ico;." `
+    --icon "images/icon.ico" `
+    --add-data "images/icon.ico;." `
     --collect-all mediapipe `
     app.py 
 ```
