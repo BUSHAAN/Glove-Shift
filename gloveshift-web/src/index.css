@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@theme {
+  --color-gs-black: #000000;
+  --color-gs-charcoal: #0a0a0a;
+  --color-gs-surface: #111111;
+  --color-gs-elevated: #161616;
+  --color-gs-border: #252525;
+  --color-gs-blue: #00a3ff;
+  --color-gs-blue-dim: #0077bb;
+  --color-gs-red: #d81e27;
+  --color-gs-red-bright: #ff2a33;
+  --color-gs-silver: #e5e5e5;
+  --color-gs-muted: #8a8a8a;
+  --color-gs-dim: #5a5a5a;
+
+  --font-display: "Big Shoulders Display", sans-serif;
+  --font-body: "Red Hat Text", sans-serif;
+  --font-mono: "Red Hat Mono", ui-monospace, monospace;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    background: var(--color-gs-black);
+    color: var(--color-gs-silver);
+    font-family: var(--font-body);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  #root {
+    width: 100%;
+    min-height: 100svh;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-gs-blue) 35%, transparent);
+    color: white;
+  }
+}
+
+@layer utilities {
+  .text-gradient-brand {
+    background: linear-gradient(105deg, #e8e8e8 0%, #ffffff 40%, #d81e27 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-blue-red {
+    background: linear-gradient(90deg, #00a3ff 0%, #d81e27 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .border-gradient-ring {
+    border: 1px solid transparent;
+    background:
+      linear-gradient(#111, #111) padding-box,
+      linear-gradient(135deg, #00a3ff, #1a1a1a 45%, #d81e27) border-box;
+  }
+
+  .grid-tech {
+    background-image:
+      linear-gradient(rgba(0, 163, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(216, 30, 39, 0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  .noise-overlay {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  }
+}
