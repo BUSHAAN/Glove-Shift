@@ -146,7 +146,7 @@ flowchart LR
 
 ## Run from source
 
-For development:
+For development (Python **3.10+**; 3.11–3.14 tested with current MediaPipe Tasks API):
 
 ```bash
 git clone https://github.com/BUSHAAN/Glove-Shift.git
@@ -158,6 +158,8 @@ venv\Scripts\activate          # Windows
 pip install -r requirements.txt
 python app.py
 ```
+
+The hand tracker needs `models/hand_landmarker.task` (included in the repo). If it is missing, download it from [MediaPipe Hand Landmarker](https://developers.google.com/mediapipe/solutions/vision/hand_landmarker) and place it under `models/`.
 
 ---
 
@@ -175,12 +177,14 @@ See **[README-BUILD.md](README-BUILD.md)**.
 Glove-Shift/
 ├── app.py                  # PyQt6 UI entry point
 ├── VirtualSteering.py      # Gesture → WASD loop
-├── HandTrackingModule.py   # MediaPipe hand tracking
+├── HandTrackingModule.py   # MediaPipe Hand Landmarker (Tasks API)
 ├── KeyboardInput.py        # Windows SendInput helpers
+├── models/
+│   └── hand_landmarker.task
 ├── images/
 │   ├── Gesture_Controls.png
 │   └── icon.ico
-├── Installer/              # Inno Setup script + build helper
+├── Installer/              # Inno Setup packaging
 ├── requirements.txt
 └── README-BUILD.md
 ```
@@ -192,7 +196,7 @@ Glove-Shift/
 | Layer | Tools |
 | --- | --- |
 | Language | Python 3 |
-| Vision | OpenCV, MediaPipe Hands |
+| Vision | OpenCV, MediaPipe Hand Landmarker (Tasks API) |
 | UI | PyQt6 |
 | Input | Windows `SendInput` (`ctypes`) |
 | Packaging | PyInstaller, Inno Setup |
