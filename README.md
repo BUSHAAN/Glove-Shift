@@ -1,127 +1,234 @@
-# 🧤🚗 Glove Shift: Drive with Your Hands!
+# 🧤 Glove Shift
+
+Control racing games with hand gestures captured through your webcam.
 
 <p>
   <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"/></a>
   <a href="https://opencv.org/"><img src="https://img.shields.io/badge/OpenCV-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white" alt="OpenCV"/></a>
   <a href="https://developers.google.com/mediapipe"><img src="https://img.shields.io/badge/MediaPipe-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="MediaPipe"/></a>
+  <a href="https://www.microsoft.com/windows"><img src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Windows"/></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" alt="MIT License"/></a>
+  <a href="https://github.com/BUSHAAN/Glove-Shift/releases/latest"><img src="https://img.shields.io/github/v/release/BUSHAAN/Glove-Shift?style=for-the-badge" alt="Latest Release"/></a>
 </p>
 
-**Experience a whole new level of racing immersion with Glove Shift!** This hand gesture recognition system lets you control your racing game's car intuitively, **controlling speed and navigating turns with just your hands**. It's open-source, customizable, and brings a **fun and unique twist to your virtual driving adventures**. [Check out the demostration video on LinkedIn.](https://www.linkedin.com/posts/bushaangunatilake_racinggames-handgesturerecognition-computervision-activity-7187445360850616320-A-6p?utm_source=share&utm_medium=member_desktop)
+<p align="center">
+  <a href="https://github.com/BUSHAAN/Glove-Shift/releases/latest"><strong>Download</strong></a>
+  ·
+  <a href="https://www.linkedin.com/posts/bushaangunatilake_racinggames-handgesturerecognition-computervision-activity-7187445360850616320-A-6p"><strong>Demo</strong></a>
+  ·
+  <a href="#installation"><strong>Installation</strong></a>
+</p>
 
 ---
 
-## ✨ Features
+## Why Glove Shift?
 
-* **Gesture-based control:** Master the racetrack using intuitive hand gestures for acceleration, braking, steering, and reverse.
-* **No complex setup:** Just install and run. No extra calibration or coding required.
-* **Universal game compatibility:** Works with any racing game, no special integrations needed.  
+Racing games are usually played with a keyboard, controller, or steering wheel.
 
----
-
-## ⚙ Technologies Used
-
-* [Python](https://www.python.org/)
-* [Open Source Computer Vision Library (OpenCV)](https://opencv.org/) 
-* [MediaPipe](https://developers.google.com/mediapipe) (for efficient hand detection and pose estimation)
+Glove Shift explores a simpler idea: use a normal webcam as the controller. Hand gestures are detected in real time and translated into the same `W` `A` `S` `D` keys many racing games already use — no game mods, plugins, or custom integrations required.
 
 ---
 
-## 📦 Installation (End Users)
+## Features
 
-- **Option 1 — Installer (recommended)**
+**Real-time hand gesture control**  
+Detects a right hand through the webcam and maps gestures to accelerate, brake/reverse, and steer left or right.
 
-  1. Download the latest `GloveShift-Setup.exe` from the Releases.
-  2. Run the installer.
-  3. Launch `GloveShift.exe` and let it run in the background.
-  4. If an error occurs, install the Visual C++ Redistributable 2015–2022 (both x64 and x86 versions are included in the release).
-  5. Open your racing game and make sure the driving controls are mapped to W (accelerate), A (left), S (brake/reverse), and D (right) for proper gesture control.
-  6. Have Fun !
+**Works with WASD racing games**  
+Simulates keyboard input at the OS level, so any game that drives with `W` `A` `S` `D` can respond without special support.
 
-- **Option 2 — Portable version**
+**Webcam-only setup**  
+No gloves, tracking hardware, or external controllers — just a camera and Windows.
 
-  1. Download `GloveShift-Portable.exe`.
-  2. Run directly (no installation required).
+**Simple desktop UI**  
+A small PyQt6 window starts and stops the steering loop, with a live OpenCV preview of the tracked hand.
 
+**Windows installer and portable build**  
+Download a setup package or a standalone portable EXE from [Releases](https://github.com/BUSHAAN/Glove-Shift/releases/latest) — no Python install needed for end users.
 
-> [!NOTE]
-> The portable version (Option 2) is *plug-and-play*. It **does not** create a desktop shortcut, will **not** appear in *Add/Remove Programs*, and has **no** uninstaller. The installer (Option 1) does create shortcuts and an uninstall entry.
+---
 
-  
-### 🖥 Requirements
-- Windows 10/11 (64-bit recommended)
-- Webcam (for gesture recognition)
-- Visual C++ Redistributable 2015–2022 (included in release)
+## Demo
 
---- 
+Watch Glove Shift controlling a racing game with hand gestures:
 
-## 🧑‍💻 Installation (Developers)
+**[▶ Demo on LinkedIn](https://www.linkedin.com/posts/bushaangunatilake_racinggames-handgesturerecognition-computervision-activity-7187445360850616320-A-6p)**
 
-Want to hack on the code? Use this setup:
-1. Ensure you have Python 3 installed (https://www.python.org/downloads/).
-2. Clone or download the project repository.
+Gesture reference (right hand):
+
+<p align="center">
+  <img src="images/Gesture_Controls.png?raw=true" alt="Gesture control chart" width="640">
+</p>
+
+| Gesture idea | Keys |
+| --- | --- |
+| Accelerate | `W` |
+| Brake / reverse | `S` |
+| Steer left / right | `A` / `D` |
+| Combined (e.g. accelerate + left) | `W` + `A`, and similar pairs |
+
+> **Note:** Tracking is tuned for the **right hand**. Left-hand input is not supported yet.
+
+---
+
+## How it works
+
+```text
+Webcam
+   ↓
+OpenCV frame capture
+   ↓
+MediaPipe hand landmarks
+   ↓
+Gesture recognition (finger / tilt rules)
+   ↓
+Control mapping → W A S D
+   ↓
+Windows keyboard input (SendInput)
+   ↓
+Racing game
+```
+
+1. **Capture** — OpenCV reads webcam frames and shows a live preview with FPS.
+2. **Detect** — MediaPipe Hands finds 21 landmarks on a single hand.
+3. **Recognize** — Landmark geometry decides accelerate, brake, or neutral, plus left/right tilt for steering.
+4. **Inject** — `KeyboardInput` presses and releases `W` `A` `S` `D` through the Windows `SendInput` API.
+5. **Play** — The focused racing game receives those keys like a normal keyboard.
+
+---
+
+## Architecture
+
+```mermaid
+flowchart LR
+    A[Webcam] --> B[OpenCV]
+    B --> C[MediaPipe Hands]
+    C --> D[VirtualSteering]
+    D --> E[KeyboardInput]
+    E --> F[Racing Game]
+
+    G[PyQt6 UI] --> D
+```
+
+| Module | Role |
+| --- | --- |
+| `app.py` | PyQt6 entry point — start/stop steering, camera check |
+| `VirtualSteering.py` | Frame loop, landmark rules, key mapping |
+| `HandTrackingModule.py` | MediaPipe wrapper for detection and landmark lists |
+| `KeyboardInput.py` | Low-level `W` `A` `S` `D` press/release via `ctypes` / `SendInput` |
+
+---
+
+## Installation
+
+### Requirements
+
+- Windows 10/11
+- Webcam
+- For the packaged app: Visual C++ Redistributable 2015–2022 if the EXE fails to start (bundled with the installer zip on the release)
+
+### Option 1 — Installer (recommended)
+
+1. Download **`GloveShift.Setup.1.0.0.zip`** from [Releases](https://github.com/BUSHAAN/Glove-Shift/releases/latest).
+2. Extract and run the setup EXE.
+3. Launch **Glove Shift** and click **Start Steering!**
+4. Open a racing game and map driving to `W` (accelerate), `A` (left), `S` (brake/reverse), `D` (right) if needed.
+5. Keep the game focused and use your **right hand** in front of the camera.
+
+### Option 2 — Portable
+
+1. Download **`GloveShift.Portable.exe.zip`** from [Releases](https://github.com/BUSHAAN/Glove-Shift/releases/latest).
+2. Extract and run the EXE — no installer, no Start Menu entry, no uninstaller.
+
+> Windows SmartScreen may warn on unsigned builds. Choose **More info → Run anyway** if you trust the download. Checksums are in `SHA256SUMS.txt` on the release.
+
+---
+
+## Run from source
+
+For development:
+
 ```bash
 git clone https://github.com/BUSHAAN/Glove-Shift.git
-```
-3. Create Virtual Environment (Optional but Recommended)
-```bash
+cd Glove-Shift
+
 python -m venv venv
-source venv/bin/activate   # Linux/Mac
-venv\Scripts\activate      # Windows
-```
+venv\Scripts\activate          # Windows
 
-4.  Install dependencies from requirements.txt
-```bash
 pip install -r requirements.txt
-```
-
-5. Run the application
-```bash
 python app.py
 ```
 
 ---
 
-## 🔨 Build from Source
-To build the standalone EXE and the Windows installer, follow the step-by-step guide:
+## Build from source
 
-See: [Build and Package (Windows)](README-BUILD.md)
+To produce a standalone EXE and Windows installer (PyInstaller + Inno Setup):
+
+See **[README-BUILD.md](README-BUILD.md)**.
 
 ---
 
-## Gesture Controls for the application... Have Fun!!!
-<img src="images/Gesture_Controls.png?raw=true" height="400">
+## Project layout
 
-> [!NOTE]
-> This application currently uses right-hand gestures for optimal control. Left hand functionalities will be added soon.
---- 
+```text
+Glove-Shift/
+├── app.py                  # PyQt6 UI entry point
+├── VirtualSteering.py      # Gesture → WASD loop
+├── HandTrackingModule.py   # MediaPipe hand tracking
+├── KeyboardInput.py        # Windows SendInput helpers
+├── images/
+│   ├── Gesture_Controls.png
+│   └── icon.ico
+├── Installer/              # Inno Setup script + build helper
+├── requirements.txt
+└── README-BUILD.md
+```
 
-## 🤝 Contributing
+---
 
-We welcome contributions to improve **Glove Shift** and make virtual racing with hand gestures even more fun and accessible! 🚗💨
+## Tech stack
 
-- **Current focus areas:**
-  - Improving gesture detection accuracy and stability.
-  - Enhancing the PyQt6 interface (usability, design, error handling).
-  - Expanding cross-platform compatibility (Windows/Linux).
-  - Packaging improvements (PyInstaller/Inno Setup).
+| Layer | Tools |
+| --- | --- |
+| Language | Python 3 |
+| Vision | OpenCV, MediaPipe Hands |
+| UI | PyQt6 |
+| Input | Windows `SendInput` (`ctypes`) |
+| Packaging | PyInstaller, Inno Setup |
 
-- **How to contribute:**
-  1. Fork the repository.
-  2. Create a new branch:  
-     ```bash
-     git checkout -b feature-name
-     ```
-  3. Make your changes and commit:  
-     ```bash
-     git commit -m "Added new feature/fix"
-     ```
-  4. Push your branch and open a Pull Request:  
-     ```bash
-     git push origin feature-name
-     ```
+---
 
-- **Guidelines:**
-  - Please test your changes locally before submitting.
-  - For major updates, open an issue first to discuss your proposal.
-  - Stick to existing code style and keep commits clear and concise.
+## Limitations
 
+- **Windows only** for keyboard injection (`SendInput`).
+- **Right hand only** in the current gesture logic.
+- Games must accept **keyboard** `W` `A` `S` `D` (or be remappable to those keys).
+- Lighting, camera angle, and hand pose affect recognition quality.
+
+---
+
+## Contributing
+
+Contributions are welcome.
+
+**Useful areas**
+
+- Gesture accuracy and stability
+- PyQt6 UI / error handling
+- Packaging and build docs
+- Cross-platform input (today’s keyboard layer is Windows-specific)
+
+**Workflow**
+
+1. Fork the repo and create a branch.
+2. Make focused changes and test with `python app.py`.
+3. Open a pull request with a short description of what changed and why.
+
+For larger ideas, open an issue first.
+
+---
+
+## License
+
+Released under the [MIT License](LICENSE).
