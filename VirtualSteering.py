@@ -23,6 +23,24 @@ _pending_count = 0
 _active_keys = ()
 _active_steer = None  # "left" | "right" | None
 
+# "either" | "left" | "right" — which hand(s) may drive input
+_hand_preference = "either"
+
+
+def get_hand_preference():
+    return _hand_preference
+
+
+def set_hand_preference(hand):
+    """Accept either, left, or right. Invalid values fall back to either."""
+    global _hand_preference
+    hand = (hand or "either").lower()
+    if hand not in ("either", "left", "right"):
+        hand = "either"
+    if hand != _hand_preference:
+        _hand_preference = hand
+        _reset_debounce()
+
 
 def _apply_sensitivity_mapping(steering, smoothing):
     """Map UI 0–100 values to tilt thresholds and debounce frames."""
@@ -206,22 +224,43 @@ def _keys_for_gesture(drive, steer):
     return keys
 
 
+def _detect_handedness(lm_list):
+    """
+    Infer left/right from landmark layout in the mirrored webcam view.
+    Right: index base left of pinky base; Left: the opposite.
+    """
+    index_base_x = lm_list[5][1]
+    pinky_base_x = lm_list[17][1]
+    if index_base_x < pinky_base_x:
+        return "right"
+    if index_base_x > pinky_base_x:
+        return "left"
+    return None
+
+
 def _classify_gesture(lm_list):
     """
-    Return (drive, steer_hint) for a right hand, or None if not a right hand.
+    Return (hand, drive, tilt) for a usable hand, or None if rejected.
     drive: 'accelerate' | 'brake' | 'neutral'
     """
+    hand = _detect_handedness(lm_list)
+    if hand is None:
+        return None
+    if _hand_preference != "either" and hand != _hand_preference:
+        return None
+
     thumb_tip_x = lm_list[4][1]
     index_base_x, index_base_y = lm_list[5][1], lm_list[5][2]
     mid_base_y = lm_list[9][2]
     mid_tip_y = lm_list[12][2]
-    pinky_base_x, pinky_base_y = lm_list[17][1], lm_list[17][2]
+    pinky_base_y = lm_list[17][2]
 
-    # Right hand: index base left of pinky base (mirrored webcam view)
-    if index_base_x >= pinky_base_x:
-        return None
+    # Thumb-out is mirrored for left vs right in the flipped webcam frame
+    if hand == "right":
+        thumb_out = index_base_x < thumb_tip_x
+    else:
+        thumb_out = index_base_x > thumb_tip_x
 
-    thumb_out = index_base_x < thumb_tip_x
     mid_extended = mid_base_y < mid_tip_y
 
     if thumb_out:
@@ -231,8 +270,21 @@ def _classify_gesture(lm_list):
     else:
         drive = "neutral"
 
-    tilt = index_base_y - pinky_base_y
-    return drive, tilt
+    # Tilt sign is opposite for left vs right in the mirrored webcam frame.
+    # Do not reuse one formula for both hands.
+    if hand == "right":
+        tilt = index_base_y - pinky_base_y
+    else:
+        tilt = pinky_base_y - index_base_y
+    return hand, drive, tilt
+
+
+def _rejected_hand_message():
+    if _hand_preference == "right":
+        return "Use right hand"
+    if _hand_preference == "left":
+        return "Use left hand"
+    return "Show a hand"
 
 
 def steering(fps):
@@ -285,7 +337,7 @@ def steering(fps):
         _clear_input()
         cv2.putText(
             img,
-            "Use right hand",
+            _rejected_hand_message(),
             (10, 80),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.8,
@@ -295,14 +347,14 @@ def steering(fps):
         _show_frame(img)
         return True
 
-    drive, tilt = classified
+    hand, drive, tilt = classified
     steer = _steer_from_tilt(tilt)
     keys = _keys_for_gesture(drive, steer)
     _commit_keys(keys)
 
-    label = drive
+    label = f"{drive} ({hand[0].upper()})"
     if steer:
-        label = f"{drive} + {steer}"
+        label = f"{drive} + {steer} ({hand[0].upper()})"
     cv2.putText(
         img,
         label,

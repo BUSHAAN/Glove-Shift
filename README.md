@@ -32,7 +32,7 @@ Glove Shift explores a simpler idea: use a normal webcam as the controller. Hand
 ## Features
 
 **Real-time hand gesture control**  
-Detects a right hand through the webcam and maps gestures to accelerate, brake/reverse, and steer left or right.
+Detects a left or right hand through the webcam and maps gestures to accelerate, brake/reverse, and steer left or right.
 
 **Works with WASD racing games**  
 Simulates keyboard input at the OS level, so any game that drives with `W` `A` `S` `D` can respond without special support.
@@ -41,7 +41,7 @@ Simulates keyboard input at the OS level, so any game that drives with `W` `A` `
 No gloves, tracking hardware, or external controllers — just a camera and Windows.
 
 **Simple desktop UI**  
-A small PyQt6 window starts and stops the steering loop, with a live OpenCV preview of the tracked hand.
+A small PyQt6 window starts and stops the steering loop, with a live OpenCV preview of the tracked hand. Choose **Either hand** (default), left only, or right only.
 
 **Adjustable sensitivity**  
 Steering sensitivity and smoothing sliders in the app tune how quickly tilt turns engage and how stable gesture-to-key mapping feels. Settings are saved locally.
@@ -57,7 +57,7 @@ Watch Glove Shift controlling a racing game with hand gestures:
 
 **[▶ Demo on LinkedIn](https://www.linkedin.com/posts/bushaangunatilake_racinggames-handgesturerecognition-computervision-activity-7187445360850616320-A-6p)**
 
-Gesture reference (right hand):
+Gesture reference (mirror the same poses for the left hand):
 
 <p align="center">
   <img src="images/Gesture_Controls.png?raw=true" alt="Gesture control chart" width="640">
@@ -70,7 +70,7 @@ Gesture reference (right hand):
 | Steer left / right | `A` / `D` |
 | Combined (e.g. accelerate + left) | `W` + `A`, and similar pairs |
 
-> **Note:** Tracking is tuned for the **right hand**. Left-hand input is not supported yet.
+> **Note:** Default hand mode is **Either hand**. You can lock to left or right in the app.
 
 ---
 
@@ -136,7 +136,7 @@ flowchart LR
 2. Extract and run the setup EXE.
 3. Launch **Glove Shift** and click **Start Steering!**
 4. Open a racing game and map driving to `W` (accelerate), `A` (left), `S` (brake/reverse), `D` (right) if needed.
-5. Keep the game focused and use your **right hand** in front of the camera.
+5. Keep the game focused and use either hand in front of the camera (or lock left/right in the UI).
 
 ### Option 2 — Portable
 
@@ -210,7 +210,6 @@ Glove-Shift/
 ## Limitations
 
 - **Windows only** for keyboard injection (`SendInput`).
-- **Right hand only** in the current gesture logic.
 - Games must accept **keyboard** `W` `A` `S` `D` (or be remappable to those keys).
 - Lighting, camera angle, and hand pose affect recognition quality.
 

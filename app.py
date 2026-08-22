@@ -10,9 +10,16 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QSlider,
+    QComboBox,
     QMessageBox,
 )
 from PyQt6.QtCore import QTimer, Qt
+
+HAND_OPTIONS = [
+    ("Either hand", "either"),
+    ("Left hand", "left"),
+    ("Right hand", "right"),
+]
 
 
 class MyWindow(QWidget):
@@ -22,6 +29,7 @@ class MyWindow(QWidget):
         super().__init__()
         saved = app_settings.load_settings()
         vs.set_sensitivity(saved["steering"], saved["smoothing"])
+        vs.set_hand_preference(saved["hand"])
 
         self.initUI(saved)
         app.aboutToQuit.connect(self.cleanup)
@@ -33,11 +41,28 @@ class MyWindow(QWidget):
 
     def initUI(self, saved):
         self.setWindowTitle("Glove Shift")
-        self.setFixedWidth(320)
-        self.setMinimumHeight(180)
+        self.setFixedWidth(340)
+        self.setMinimumHeight(220)
 
         self.button = QPushButton("Start Steering!")
         self.button.clicked.connect(self.handle_button_click)
+
+        self.hand_combo = QComboBox()
+        for label, value in HAND_OPTIONS:
+            self.hand_combo.addItem(label, value)
+        hand_index = max(
+            0,
+            next(
+                (i for i, (_, v) in enumerate(HAND_OPTIONS) if v == saved["hand"]),
+                0,
+            ),
+        )
+        self.hand_combo.setCurrentIndex(hand_index)
+        self.hand_combo.currentIndexChanged.connect(self.on_hand_changed)
+
+        hand_row = QHBoxLayout()
+        hand_row.addWidget(QLabel("Hand"))
+        hand_row.addWidget(self.hand_combo)
 
         self.steering_slider = QSlider(Qt.Orientation.Horizontal)
         self.steering_slider.setRange(0, 100)
@@ -65,6 +90,7 @@ class MyWindow(QWidget):
 
         layout = QVBoxLayout()
         layout.addWidget(self.button)
+        layout.addLayout(hand_row)
         layout.addLayout(steering_row)
         layout.addLayout(smoothing_row)
         self.setLayout(layout)
@@ -74,13 +100,24 @@ class MyWindow(QWidget):
         frames = vs.get_sensitivity()["debounce_frames"]
         return f"{smoothing} ({frames}f)"
 
+    def _persist(self):
+        app_settings.save_settings(
+            self.steering_slider.value(),
+            self.smoothing_slider.value(),
+            self.hand_combo.currentData(),
+        )
+
+    def on_hand_changed(self, _index=None):
+        vs.set_hand_preference(self.hand_combo.currentData())
+        self._persist()
+
     def on_sensitivity_changed(self, _value=None):
         steering = self.steering_slider.value()
         smoothing = self.smoothing_slider.value()
         vs.set_sensitivity(steering, smoothing)
         self.steering_value.setText(str(steering))
         self.smoothing_value.setText(self._smoothing_label(smoothing))
-        app_settings.save_settings(steering, smoothing)
+        self._persist()
 
     def handle_button_click(self):
         if not self.steering_state:
