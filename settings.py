@@ -7,6 +7,7 @@ import KeyboardInput as ki
 DEFAULT_STEERING = 50
 DEFAULT_SMOOTHING = 40
 DEFAULT_HAND = "either"
+DEFAULT_CAMERA = 1
 VALID_HANDS = ("either", "left", "right")
 DEFAULT_KEYS = dict(ki.DEFAULT_BINDS)
 
@@ -35,6 +36,7 @@ def load_settings():
         "steering": DEFAULT_STEERING,
         "smoothing": DEFAULT_SMOOTHING,
         "hand": DEFAULT_HAND,
+        "camera": DEFAULT_CAMERA,
         "keys": dict(DEFAULT_KEYS),
     }
     if not os.path.isfile(path):
@@ -49,6 +51,8 @@ def load_settings():
                 data["smoothing"] = _clamp_int(raw["smoothing"], 0, 100, DEFAULT_SMOOTHING)
             if "hand" in raw:
                 data["hand"] = _normalize_hand(raw["hand"])
+            if "camera" in raw:
+                data["camera"] = _clamp_int(raw["camera"], 0, 64, DEFAULT_CAMERA)
             if "keys" in raw:
                 data["keys"] = _normalize_keys(raw["keys"])
     except (OSError, json.JSONDecodeError, TypeError, ValueError):
@@ -56,12 +60,19 @@ def load_settings():
     return data
 
 
-def save_settings(steering, smoothing, hand=DEFAULT_HAND, keys=None):
+def save_settings(
+    steering,
+    smoothing,
+    hand=DEFAULT_HAND,
+    keys=None,
+    camera=DEFAULT_CAMERA,
+):
     path = settings_path()
     payload = {
         "steering": _clamp_int(steering, 0, 100, DEFAULT_STEERING),
         "smoothing": _clamp_int(smoothing, 0, 100, DEFAULT_SMOOTHING),
         "hand": _normalize_hand(hand),
+        "camera": _clamp_int(camera, 0, 64, DEFAULT_CAMERA),
         "keys": _normalize_keys(keys if keys is not None else DEFAULT_KEYS),
     }
     try:

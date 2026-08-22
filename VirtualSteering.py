@@ -1,9 +1,12 @@
+import sys
 import cv2
 import HandTrackingModule as htm
 import KeyboardInput as ki
 
 wCam, hCam = 384, 288
 CAMERA_INDEX = 0
+_camera_index = CAMERA_INDEX
+_MAX_CAMERA_PROBE = 8
 
 # User-facing sensitivity (0–100). Defaults match prior hard-coded feel.
 _steering_ui = 50
@@ -122,16 +125,100 @@ def set_sensitivity(steering, smoothing):
 _apply_sensitivity_mapping(_steering_ui, _smoothing_ui)
 
 
-def start_camera(camera_index=CAMERA_INDEX):
+def _capture_backend():
+    # DirectShow is more reliable for open/probe on Windows multi-cam setups
+    if sys.platform == "win32":
+        return cv2.CAP_DSHOW
+    return cv2.CAP_ANY
+
+
+def _windows_camera_names():
+    """
+    Best-effort friendly names via Windows PnP (Camera class).
+    Order often matches DirectShow / OpenCV CAP_DSHOW indices, but is not guaranteed.
+    """
+    if sys.platform != "win32":
+        return []
+    try:
+        import subprocess
+
+        completed = subprocess.run(
+            [
+                "powershell",
+                "-NoProfile",
+                "-Command",
+                "Get-PnpDevice -Class Camera -Status OK -ErrorAction SilentlyContinue "
+                "| Select-Object -ExpandProperty FriendlyName",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=8,
+            check=False,
+        )
+        names = []
+        for line in (completed.stdout or "").splitlines():
+            name = line.strip()
+            if name:
+                names.append(name)
+        return names
+    except (OSError, subprocess.SubprocessError, subprocess.TimeoutExpired):
+        return []
+
+
+def list_cameras(max_check=_MAX_CAMERA_PROBE):
+    """
+    Probe camera indices and return [{"index": int, "name": str}, ...].
+    On Windows, prefers PnP friendly names when available.
+    """
+    found = []
+    backend = _capture_backend()
+    for i in range(max_check):
+        cap_probe = cv2.VideoCapture(i, backend)
+        try:
+            if not cap_probe.isOpened():
+                continue
+            ok, _frame = cap_probe.read()
+            if ok:
+                found.append({"index": i, "name": f"Camera {i}"})
+        finally:
+            cap_probe.release()
+
+    friendly = _windows_camera_names()
+    if friendly and found:
+        for offset, cam in enumerate(found):
+            if offset < len(friendly):
+                cam["name"] = f"{friendly[offset]} ({cam['index']})"
+            else:
+                cam["name"] = f"Camera {cam['index']}"
+    return found
+
+
+def get_camera_index():
+    return _camera_index
+
+
+def set_camera_index(index):
+    """Set preferred camera index (applied on next start_camera)."""
+    global _camera_index
+    try:
+        _camera_index = max(0, int(index))
+    except (TypeError, ValueError):
+        _camera_index = CAMERA_INDEX
+
+
+def start_camera(camera_index=None):
     """Open the webcam for the steering loop. Returns True on success."""
-    global cap, detector, _window_ready
+    global cap, detector, _window_ready, _camera_index
+
+    if camera_index is not None:
+        set_camera_index(camera_index)
 
     if cap is not None and cap.isOpened():
         return True
 
     stop_camera()
 
-    new_cap = cv2.VideoCapture(camera_index)
+    new_cap = cv2.VideoCapture(_camera_index, _capture_backend())
     if not new_cap.isOpened():
         new_cap.release()
         return False
