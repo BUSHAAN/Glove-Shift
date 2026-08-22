@@ -23,10 +23,10 @@ function App() {
         <Pipeline />
         <Vision />
         <Engineering />
-        <Architecture />
+        {/* <Architecture /> */}
         <Tech />
         <DownloadCTA />
-        <Limitations />
+        {/* <Limitations /> */}
         <Explore />
       </main>
       <Footer />
