@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://gloveshift-web.vercel.app/sitemap.xml

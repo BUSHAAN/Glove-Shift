@@ -5,10 +5,8 @@ import { Idea } from './components/Idea'
 import { Pipeline } from './components/Pipeline'
 import { Vision } from './components/Vision'
 import { Engineering } from './components/Engineering'
-import { Architecture } from './components/Architecture'
 import { Tech } from './components/Tech'
 import { DownloadCTA } from './components/DownloadCTA'
-import { Limitations } from './components/Limitations'
 import { Explore } from './components/Explore'
 import { Footer } from './components/Footer'
 
@@ -23,10 +21,8 @@ function App() {
         <Pipeline />
         <Vision />
         <Engineering />
-        {/* <Architecture /> */}
         <Tech />
         <DownloadCTA />
-        {/* <Limitations /> */}
         <Explore />
       </main>
       <Footer />

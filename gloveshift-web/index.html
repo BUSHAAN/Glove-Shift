@@ -2,24 +2,113 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.ico" sizes="any" />
-    <link rel="icon" type="image/png" href="/icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Glove Shift — Your Webcam. Your Controller.</title>
     <meta
       name="description"
       content="Glove Shift turns your webcam into a racing controller. Real-time hand gestures become WASD input for Windows racing games."
     />
+    <meta
+      name="keywords"
+      content="Glove Shift, hand gesture racing, webcam controller, MediaPipe, OpenCV, WASD, computer vision, Windows"
+    />
+    <meta name="author" content="Bushaan Gunatilake" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="theme-color" content="#000000" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="canonical" href="%VITE_SITE_URL%/" />
+
+    <!-- Favicons -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" href="/icon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Glove Shift" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:url" content="%VITE_SITE_URL%/" />
+    <meta
+      property="og:title"
+      content="Glove Shift — Your Webcam. Your Controller."
+    />
+    <meta
+      property="og:description"
+      content="Control racing games with real-time hand gestures from your webcam. Open-source computer vision for Windows."
+    />
+    <meta property="og:image" content="%VITE_SITE_URL%/og-image.png" />
+    <meta property="og:image:width" content="1536" />
+    <meta property="og:image:height" content="1024" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:alt" content="Glove Shift logo — Your webcam. Your controller." />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Glove Shift — Your Webcam. Your Controller."
+    />
+    <meta
+      name="twitter:description"
+      content="Control racing games with real-time hand gestures from your webcam. Open-source computer vision for Windows."
+    />
+    <meta name="twitter:image" content="%VITE_SITE_URL%/og-image.png" />
+    <meta name="twitter:image:alt" content="Glove Shift logo — Your webcam. Your controller." />
+
+    <!-- JSON-LD -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "%VITE_SITE_URL%/#website",
+            "url": "%VITE_SITE_URL%/",
+            "name": "Glove Shift",
+            "description": "Glove Shift turns your webcam into a racing controller.",
+            "publisher": { "@id": "%VITE_SITE_URL%/#person" }
+          },
+          {
+            "@type": "SoftwareApplication",
+            "@id": "%VITE_SITE_URL%/#app",
+            "name": "Glove Shift",
+            "applicationCategory": "GameApplication",
+            "operatingSystem": "Windows 10, Windows 11",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "description": "Control racing games with hand gestures captured through your webcam using OpenCV, MediaPipe, and Windows SendInput.",
+            "url": "%VITE_SITE_URL%/",
+            "downloadUrl": "https://github.com/BUSHAAN/Glove-Shift/releases/latest",
+            "softwareVersion": "1.0.1",
+            "license": "https://github.com/BUSHAAN/Glove-Shift/blob/main/LICENSE",
+            "author": { "@id": "%VITE_SITE_URL%/#person" },
+            "image": "%VITE_SITE_URL%/og-image.png"
+          },
+          {
+            "@type": "Person",
+            "@id": "%VITE_SITE_URL%/#person",
+            "name": "Bushaan Gunatilake",
+            "url": "https://github.com/BUSHAAN"
+          }
+        ]
+      }
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;600;700;800&family=Red+Hat+Mono:wght@400;500&family=Red+Hat+Text:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap"
       rel="stylesheet"
     />
-    <title>Glove Shift — Your Webcam. Your Controller.</title>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
+
