@@ -21,8 +21,12 @@ dist/
 !main.spec
 
 # Installer outputs (Inno Setup)
+Installer/Output*/
 installer/Output*/
 *.exe
+
+# Prepared GitHub release assets (zips + checksums)
+releases/
 
 ########## Packaging / wheels ##########
 *.egg-info/

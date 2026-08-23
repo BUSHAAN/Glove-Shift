@@ -2,6 +2,34 @@
 
 This guide shows how to build the standalone EXE and the Windows installer.
 
+## Quick release (recommended)
+
+One script builds the portable EXE, Windows installer, zip archives, and checksums into a gitignored `releases\<version>\` folder — ready to drag onto GitHub Releases:
+
+```powershell
+# From the project root, with venv active and .env configured
+powershell -ExecutionPolicy Bypass -File .\build-release.ps1
+```
+
+Output (example for version `1.0.1`):
+
+```text
+releases\1.0.1\
+  GloveShift.Portable.exe.zip
+  GloveShift.Setup.1.0.1.zip
+  SHA256SUMS.txt
+```
+
+Optional flags:
+
+```powershell
+.\build-release.ps1 -SkipExe          # reuse existing dist\GloveShift.exe
+.\build-release.ps1 -SkipInstaller    # reuse existing Installer\Output\*.exe
+.\build-release.ps1 -ISCCPath "C:\...\ISCC.exe"
+```
+
+---
+
 ## 1) Prerequisites
 - Windows 10/11
 - Python 3
