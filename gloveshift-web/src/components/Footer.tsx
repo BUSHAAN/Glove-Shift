@@ -46,7 +46,24 @@ export function Footer() {
       </Container>
       <Container className="mt-8 border-t border-gs-border pt-6">
         <p className="font-mono text-[10px] tracking-[0.14em] text-gs-dim uppercase">
-          MIT · Bushaan Gunatilake
+          © 2024–{new Date().getFullYear()}{' '}
+          <a
+            href={LINKS.portfolio}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition-colors hover:text-gs-silver"
+          >
+            Bushaan Gunatilake
+          </a>
+          {' · '}
+          <a
+            href={LINKS.license}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition-colors hover:text-gs-silver"
+          >
+            MIT License
+          </a>
         </p>
       </Container>
     </footer>

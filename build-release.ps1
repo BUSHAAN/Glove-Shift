@@ -3,11 +3,11 @@
   Build Glove Shift release assets ready to upload to GitHub Releases.
 
 .DESCRIPTION
-  1. Builds the portable one-file EXE with PyInstaller
-  2. Builds the Windows installer (Inno Setup)
-  3. Zips portable + setup
-  4. Writes SHA256SUMS.txt
-  5. Copies the three files into releases\<version>\ (gitignored)
+  1. Updates LICENSE copyright end-year if needed
+  2. Builds the portable one-file EXE with PyInstaller
+  3. Builds the Windows installer (Inno Setup)
+  4. Zips portable + setup
+  5. Writes SHA256SUMS.txt into releases\<version>\ (gitignored)
 
 .EXAMPLE
   powershell -ExecutionPolicy Bypass -File .\build-release.ps1
@@ -48,6 +48,43 @@ function Write-Step([string]$Message) {
     Write-Host "==> $Message" -ForegroundColor Cyan
 }
 
+function Update-LicenseCopyrightYear {
+    param(
+        [string]$LicensePath,
+        [int]$StartYear = 2024
+    )
+
+    if (-not (Test-Path -LiteralPath $LicensePath)) {
+        Write-Warning "LICENSE not found at $LicensePath - skipping copyright year update."
+        return
+    }
+
+    $currentYear = [DateTime]::Now.Year
+    $text = Get-Content -LiteralPath $LicensePath -Raw
+
+    # Match Copyright (c) 2024 or Copyright (c) 2024-2025 (hyphen or en-dash)
+    $pattern = 'Copyright \(c\) (\d{4})(?:[-' + [char]0x2013 + '](\d{4}))?'
+    $match = [regex]::Match($text, $pattern)
+    if (-not $match.Success) {
+        Write-Warning "No copyright year found in LICENSE - skipping."
+        return
+    }
+
+    $fileStart = [int]$match.Groups[1].Value
+    $fileEnd = if ($match.Groups[2].Success) { [int]$match.Groups[2].Value } else { $fileStart }
+    $start = [Math]::Min($fileStart, $StartYear)
+
+    if ($fileEnd -eq $currentYear -and $fileStart -eq $start) {
+        Write-Host "LICENSE copyright already up to date ($start-$currentYear)." -ForegroundColor DarkGray
+        return
+    }
+
+    $replacement = "Copyright (c) $start-$currentYear"
+    $updated = [regex]::Replace($text, $pattern, $replacement, 1)
+    Set-Content -LiteralPath $LicensePath -Value $updated -NoNewline -Encoding utf8
+    Write-Host "Updated LICENSE copyright: $start-$fileEnd -> $start-$currentYear" -ForegroundColor Yellow
+}
+
 $envMap = Read-DotEnv (Join-Path $ProjectRoot ".env")
 if ($envMap.Count -eq 0) {
     $envMap = Read-DotEnv (Join-Path $ProjectRoot ".env.example")
@@ -73,7 +110,9 @@ Write-Host "  Version: $Version"
 Write-Host "  EXE:     $ExeName"
 Write-Host "  Output:  $ReleaseDir"
 
-# Prefer project venv Python/PyInstaller
+Write-Step "Updating LICENSE copyright year if needed"
+Update-LicenseCopyrightYear -LicensePath (Join-Path $ProjectRoot "LICENSE") -StartYear 2024
+
 $python = Join-Path $ProjectRoot "venv\Scripts\python.exe"
 $pyinstaller = Join-Path $ProjectRoot "venv\Scripts\pyinstaller.exe"
 if (-not (Test-Path -LiteralPath $python)) {
@@ -119,7 +158,6 @@ if (-not $SkipExe) {
         throw "Expected EXE not found after build: $ExePath"
     }
 
-    # Installer script expects dist\images\
     $distImages = Join-Path $DistDir "images"
     if (Test-Path -LiteralPath $distImages) {
         Remove-Item -LiteralPath $distImages -Recurse -Force
@@ -149,7 +187,6 @@ if (-not $SkipInstaller) {
 
     $SetupExePath = Join-Path $ProjectRoot "Installer\Output\$AppName.Setup.$Version.exe"
     if (-not (Test-Path -LiteralPath $SetupExePath)) {
-        # Fallback: newest setup exe in Output
         $SetupExePath = Get-ChildItem (Join-Path $ProjectRoot "Installer\Output") -Filter "*.exe" |
             Sort-Object LastWriteTime -Descending |
             Select-Object -First 1 -ExpandProperty FullName
@@ -176,10 +213,6 @@ $portableZip = Join-Path $ReleaseDir $PortableZipName
 $setupZip = Join-Path $ReleaseDir $SetupZipName
 $checksumFile = Join-Path $ReleaseDir $ChecksumName
 
-if (Test-Path -LiteralPath $portableZip) { Remove-Item -LiteralPath $portableZip -Force }
-if (Test-Path -LiteralPath $setupZip) { Remove-Item -LiteralPath $setupZip -Force }
-
-# Compress-Archive needs the file name inside the zip to be clean
 $tempPortableDir = Join-Path $env:TEMP "gloveshift-portable-$Version"
 $tempSetupDir = Join-Path $env:TEMP "gloveshift-setup-$Version"
 foreach ($d in @($tempPortableDir, $tempSetupDir)) {
